@@ -9,44 +9,35 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import {withStyles} from '@material-ui/core/styles';
-import { render } from '@testing-library/react';
+
 
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit *3,
-    overflowX: 'auto'
+    marginTop: theme.spacing.unit * 3,
+    overflowX: "auto"
   },
   table:{
     minWidth:1080
   }
 })
-const customers = [
-  {
-    'id':1,
-    'image':'http://placeimg.com/64/64/1',
-    'name':'Hong',
-    'birthday':'961222',
-    'gender':'M',
-    'job':'student'
-  },
-  {
-    'id':2,
-    'image':'http://placeimg.com/64/64/2',
-    'name':'Xu',
-    'birthday':'881101',
-    'gender':'M',
-    'job':'programmer'
-  },
-  {
-    'id':3,
-    'image':'http://placeimg.com/64/64/3',
-    'name':'Jang',
-    'birthday':'990305',
-    'gender':'W',
-    'job':'designer'
-  }]
+
 class App extends React.Component {
+  state = {
+    customers: ""
+  }
+
+  componentDidMount(){
+    this.callApi()
+      .then(res => this.setState({customers: res}))
+      .catch(err => console.log(err));
+  }
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    console.log(body)
+    return body;
+  }
   render(){
     const { classes } = this.props;
     return (
@@ -63,7 +54,9 @@ class App extends React.Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map(c => {return(<Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday = {c.birthday} gender = {c.gender} job = {c.job}/>);})}
+            {this.state.customers ? this.state.customers.map(c => {return(<Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday = {c.birthday} gender = {c.gender} job = {c.job}/>);}) 
+            : ""}
+            
           </TableBody>
         </Table>
       </Paper>
